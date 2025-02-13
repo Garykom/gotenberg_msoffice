@@ -1,0 +1,14 @@
+https://www.psvmc.cn/article/2023-04-23-go-wps-word-pdf.html
+
+
+https://superuser.com/questions/789968/windows-7-batch-command-line-to-save-as-pdf-file-for-word-2013-docx-file
+https://stackoverflow.com/questions/51489902/converting-excel-document-to-pdf-using-vba
+https://www.vbforums.com/showthread.php?876971-RESOLVED-Error-trying-to-create-PDF-file-from-Excel-using-vb-net-with-interop
+https://oxis.github.io/GoMacro,-a-small-utility-to-create-Word-macros-with-Go/
+https://gist.github.com/mbohun/20fbd428cea8550ecd7ab4a5e8d07c72
+
+
+curl -F "file=@test1.docx" http://localhost:3000/upload
+
+curl -F "files[]=@test1.docx" -F "files[]=@test1.xlsx" http://localhost:3000/upload
+curl -F "files=@test1.docx" -F "files=@test1.xlsx" http://localhost:3000/upload

@@ -1,0 +1,47 @@
+{
+ "comments": "Available log_level: Trace, Debug, Info, Warn, Error\nKillAppTimeout: Timeout in sec to kill winword.exe (excel.exe, powerpoint.exe), 0 - disabled \n",
+ "port": 3000,
+ "log_level": "Info",
+ "kill_app_timeout": 0,
+ "file_extensions": {
+  "ms_word": [
+   ".doc",
+   ".docm",
+   ".docx",
+   ".dot",
+   ".dotm",
+   ".dotx",
+   ".htm",
+   ".html",
+   ".mht",
+   ".mhtml",
+   ".odt",
+   ".rtf",
+   ".txt",
+   ".wps",
+   ".xml",
+   ".xps"
+  ],
+  "ms_excel": [
+   ".csv",
+   ".dbf",
+   ".ods",
+   ".xls",
+   ".xlsb",
+   ".xlsm",
+   ".xlsx",
+   ".xlt",
+   ".xltm",
+   ".xltx",
+   ".xlw"
+  ],
+  "ms_powerpoint": [
+   ".odp",
+   ".ppt",
+   ".pptx"
+  ],
+  "pdf": [
+   ".pdf"
+  ]
+ }
+}
