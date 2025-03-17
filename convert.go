@@ -48,28 +48,58 @@ func officeExcel2pdf(fileName string, pdfPath string) {
 	log.Info("fileName=" + fileName)
 	log.Info("pdfPath=" + pdfPath)
 
-	ole.CoInitializeEx(0, ole.COINIT_MULTITHREADED)
+	err := ole.CoInitializeEx(0, ole.COINIT_MULTITHREADED)
+	if err != nil {
+		log.Error(err)
+		return
+	}
 	defer ole.CoUninitialize()
 
 	unknown, err := oleutil.CreateObject("Excel.Application")
 	if err != nil {
-		checkErr(err)
+		log.Error(err)
 		return
 	}
-
 	defer unknown.Release()
-	excel, _ := unknown.QueryInterface(ole.IID_IDispatch)
+
+	excel, err := unknown.QueryInterface(ole.IID_IDispatch)
+	if err != nil {
+		log.Error(err)
+		return
+	}
 	defer excel.Release()
+
 	oleutil.PutProperty(excel, "DisplayAlerts", false)
 	oleutil.PutProperty(excel, "Visible", false)
-	workbooks := oleutil.MustGetProperty(excel, "Workbooks").ToIDispatch()
+
+	workbooks_ole, err := oleutil.GetProperty(excel, "Workbooks")
+	if err != nil {
+		log.Error(err)
+		return
+	}
+	workbooks := workbooks_ole.ToIDispatch()
 	defer workbooks.Release()
-	//workbook := oleutil.MustCallMethod(workbooks, "Open", fileName).ToIDispatch()
-	workbook := oleutil.MustCallMethod(workbooks, "Open", fileName, true).ToIDispatch()
+
+	workbook_ole, err := oleutil.CallMethod(workbooks, "Open", fileName, true)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+	workbook := workbook_ole.ToIDispatch()
 	defer workbook.Release()
-	worksheet := oleutil.MustGetProperty(workbook, "Worksheets", 1).ToIDispatch()
+
+	worksheet_ole, err := oleutil.GetProperty(workbook, "Worksheets", 1)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+	worksheet := worksheet_ole.ToIDispatch()
 	defer worksheet.Release()
-	oleutil.MustCallMethod(worksheet, "ExportAsFixedFormat", 0, pdfPath).ToIDispatch()
+
+	_, err = oleutil.CallMethod(worksheet, "ExportAsFixedFormat", 0, pdfPath)
+	if err != nil {
+		log.Error(err)
+	}
 	oleutil.PutProperty(workbook, "Saved", true)
 	oleutil.CallMethod(workbook, "Close")
 	oleutil.CallMethod(excel, "Quit")
