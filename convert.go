@@ -6,7 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2/log"
 )
 
-func officeWord2pdf(fileName string, pdfPath string) {
+func officeWord2pdf(fileName string, pdfPath string) error {
 	log.Info("officeWord2pdf - start")
 	log.Info("fileName=" + fileName)
 	log.Info("pdfPath=" + pdfPath)
@@ -17,14 +17,14 @@ func officeWord2pdf(fileName string, pdfPath string) {
 	unknown, err := oleutil.CreateObject("Word.Application")
 	if err != nil {
 		log.Error(err)
-		return
+		return err
 	}
 	defer unknown.Release()
 
 	word, err := unknown.QueryInterface(ole.IID_IDispatch)
 	if err != nil {
 		log.Error(err)
-		return
+		return err
 	}
 	defer word.Release()
 
@@ -34,7 +34,7 @@ func officeWord2pdf(fileName string, pdfPath string) {
 	documents_ole, err := oleutil.GetProperty(word, "Documents")
 	if err != nil {
 		log.Error(err)
-		return
+		return err
 	}
 	documents := documents_ole.ToIDispatch()
 	defer documents.Release()
@@ -42,7 +42,7 @@ func officeWord2pdf(fileName string, pdfPath string) {
 	document_ole, err := oleutil.CallMethod(documents, "Open", fileName)
 	if err != nil {
 		log.Error(err)
-		return
+		return err
 	}
 	document := document_ole.ToIDispatch()
 	defer document.Release()
@@ -55,9 +55,10 @@ func officeWord2pdf(fileName string, pdfPath string) {
 	oleutil.CallMethod(word, "Quit")
 
 	log.Info("officeWord2pdf - success")
+	return err
 }
 
-func officeExcel2pdf(fileName string, pdfPath string) {
+func officeExcel2pdf(fileName string, pdfPath string) error {
 	log.Info("officeExcel2pdf - start")
 	log.Info("fileName=" + fileName)
 	log.Info("pdfPath=" + pdfPath)
@@ -65,21 +66,21 @@ func officeExcel2pdf(fileName string, pdfPath string) {
 	err := ole.CoInitializeEx(0, ole.COINIT_MULTITHREADED)
 	if err != nil {
 		log.Error(err)
-		return
+		return err
 	}
 	defer ole.CoUninitialize()
 
 	unknown, err := oleutil.CreateObject("Excel.Application")
 	if err != nil {
 		log.Error(err)
-		return
+		return err
 	}
 	defer unknown.Release()
 
 	excel, err := unknown.QueryInterface(ole.IID_IDispatch)
 	if err != nil {
 		log.Error(err)
-		return
+		return err
 	}
 	defer excel.Release()
 
@@ -89,7 +90,7 @@ func officeExcel2pdf(fileName string, pdfPath string) {
 	workbooks_ole, err := oleutil.GetProperty(excel, "Workbooks")
 	if err != nil {
 		log.Error(err)
-		return
+		return err
 	}
 	workbooks := workbooks_ole.ToIDispatch()
 	defer workbooks.Release()
@@ -97,7 +98,7 @@ func officeExcel2pdf(fileName string, pdfPath string) {
 	workbook_ole, err := oleutil.CallMethod(workbooks, "Open", fileName, true)
 	if err != nil {
 		log.Error(err)
-		return
+		return err
 	}
 	workbook := workbook_ole.ToIDispatch()
 	defer workbook.Release()
@@ -105,7 +106,7 @@ func officeExcel2pdf(fileName string, pdfPath string) {
 	worksheet_ole, err := oleutil.GetProperty(workbook, "Worksheets", 1)
 	if err != nil {
 		log.Error(err)
-		return
+		return err
 	}
 	worksheet := worksheet_ole.ToIDispatch()
 	defer worksheet.Release()
@@ -119,9 +120,10 @@ func officeExcel2pdf(fileName string, pdfPath string) {
 	oleutil.CallMethod(excel, "Quit")
 
 	log.Info("officeExcel2pdf - success")
+	return err
 }
 
-func officePpt2pdf(fileName string, pdfPath string) {
+func officePpt2pdf(fileName string, pdfPath string) error {
 	log.Info("officePpt2pdf - start")
 	log.Info("fileName=" + fileName)
 	log.Info("pdfPath=" + pdfPath)
@@ -132,21 +134,21 @@ func officePpt2pdf(fileName string, pdfPath string) {
 	unknown, err := oleutil.CreateObject("PowerPoint.Application")
 	if err != nil {
 		log.Error(err)
-		return
+		return err
 	}
 	defer unknown.Release()
 
 	ppt, err := unknown.QueryInterface(ole.IID_IDispatch)
 	if err != nil {
 		log.Error(err)
-		return
+		return err
 	}
 	defer ppt.Release()
 
 	presentations_ole, err := oleutil.GetProperty(ppt, "Presentations")
 	if err != nil {
 		log.Error(err)
-		return
+		return err
 	}
 	presentations := presentations_ole.ToIDispatch()
 	defer presentations.Release()
@@ -154,7 +156,7 @@ func officePpt2pdf(fileName string, pdfPath string) {
 	presentation_ole, err := oleutil.CallMethod(presentations, "Open", fileName)
 	if err != nil {
 		log.Error(err)
-		return
+		return err
 	}
 	presentation := presentation_ole.ToIDispatch()
 	defer presentation.Release()
@@ -167,4 +169,5 @@ func officePpt2pdf(fileName string, pdfPath string) {
 	oleutil.CallMethod(ppt, "Quit")
 
 	log.Info("officePpt2pdf - success")
+	return err
 }

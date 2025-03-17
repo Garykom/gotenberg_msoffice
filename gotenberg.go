@@ -109,18 +109,24 @@ func postFormsLibreOfficeConvert(c *fiber.Ctx) error {
 		ext := strings.ToLower(fileExt)
 
 		if contains(extWord, ext) {
-			officeWord2pdf(filePath, pdfFilePath)
+			err = officeWord2pdf(filePath, pdfFilePath)
 		} else if contains(extPowerPoint, ext) {
-			officePpt2pdf(filePath, pdfFilePath)
+			err = officePpt2pdf(filePath, pdfFilePath)
 		} else if contains(extExcel, ext) {
-			officeExcel2pdf(filePath, pdfFilePath)
+			err = officeExcel2pdf(filePath, pdfFilePath)
 		} else if contains(extPDF, ext) {
 			// Ничего не делаем
+			err = nil
 		} else {
-			log.Error("Format not supported: \"" + ext + "\"")
-			continue
+			textError := "Format not supported: \"" + ext + "\""
+			log.Error(textError)
+			return fiber.NewError(fiber.StatusInternalServerError, textError)
 		}
 
+		if err != nil {
+			log.Error("MS Office Error, return 500!")
+			return fiber.NewError(fiber.StatusInternalServerError, "MS Office Error!")
+		}
 		pdfFilePaths = append(pdfFilePaths, pdfFilePath)
 	}
 
@@ -198,10 +204,10 @@ func postFormsLibreOfficeConvert(c *fiber.Ctx) error {
 	resultFile, err := os.ReadFile(resultFilePath)
 	checkErr(err)
 
-	err = c.Send(resultFile)
+	err = os.Remove(resultFilePath)
 	checkErr(err)
 
-	err = os.Remove(resultFilePath)
+	err = c.Send(resultFile)
 	checkErr(err)
 
 	return err
