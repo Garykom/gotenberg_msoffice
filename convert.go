@@ -16,27 +16,41 @@ func officeWord2pdf(fileName string, pdfPath string) {
 
 	unknown, err := oleutil.CreateObject("Word.Application")
 	if err != nil {
-		checkErr(err)
+		log.Error(err)
 		return
 	}
-
 	defer unknown.Release()
-	word, _ := unknown.QueryInterface(ole.IID_IDispatch)
+
+	word, err := unknown.QueryInterface(ole.IID_IDispatch)
+	if err != nil {
+		log.Error(err)
+		return
+	}
 	defer word.Release()
+
 	oleutil.PutProperty(word, "DisplayAlerts", false)
-
 	oleutil.PutProperty(word, "Visible", false)
-	//oleutil.PutProperty(word, "Visible", true)
 
-	documents := oleutil.MustGetProperty(word, "Documents").ToIDispatch()
+	documents_ole, err := oleutil.GetProperty(word, "Documents")
+	if err != nil {
+		log.Error(err)
+		return
+	}
+	documents := documents_ole.ToIDispatch()
 	defer documents.Release()
-	document := oleutil.MustCallMethod(documents, "Open", fileName).ToIDispatch()
-	//document := oleutil.MustCallMethod(documents, "OpenNoRepairDialog", fileName).ToIDispatch()
-	//document := oleutil.MustCallMethod(documents, "OpenNoRepairDialog", fileName, false, true).ToIDispatch()
 
+	document_ole, err := oleutil.CallMethod(documents, "Open", fileName)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+	document := document_ole.ToIDispatch()
 	defer document.Release()
 
-	oleutil.MustCallMethod(document, "SaveAs2", pdfPath, 17).ToIDispatch()
+	_, err = oleutil.CallMethod(document, "SaveAs2", pdfPath, 17)
+	if err != nil {
+		log.Error(err)
+	}
 	oleutil.CallMethod(document, "Close")
 	oleutil.CallMethod(word, "Quit")
 
@@ -109,22 +123,46 @@ func officeExcel2pdf(fileName string, pdfPath string) {
 
 func officePpt2pdf(fileName string, pdfPath string) {
 	log.Info("officePpt2pdf - start")
+	log.Info("fileName=" + fileName)
+	log.Info("pdfPath=" + pdfPath)
 
 	ole.CoInitializeEx(0, ole.COINIT_APARTMENTTHREADED)
 	defer ole.CoUninitialize()
+
 	unknown, err := oleutil.CreateObject("PowerPoint.Application")
 	if err != nil {
-		checkErr(err)
+		log.Error(err)
 		return
 	}
 	defer unknown.Release()
-	ppt, _ := unknown.QueryInterface(ole.IID_IDispatch)
+
+	ppt, err := unknown.QueryInterface(ole.IID_IDispatch)
+	if err != nil {
+		log.Error(err)
+		return
+	}
 	defer ppt.Release()
-	presentations := oleutil.MustGetProperty(ppt, "Presentations").ToIDispatch()
+
+	presentations_ole, err := oleutil.GetProperty(ppt, "Presentations")
+	if err != nil {
+		log.Error(err)
+		return
+	}
+	presentations := presentations_ole.ToIDispatch()
 	defer presentations.Release()
-	presentation := oleutil.MustCallMethod(presentations, "Open", fileName).ToIDispatch()
+
+	presentation_ole, err := oleutil.CallMethod(presentations, "Open", fileName)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+	presentation := presentation_ole.ToIDispatch()
 	defer presentation.Release()
-	oleutil.MustCallMethod(presentation, "SaveAs", pdfPath, 32).ToIDispatch()
+
+	_, err = oleutil.CallMethod(presentation, "SaveAs", pdfPath, 32)
+	if err != nil {
+		log.Error(err)
+	}
 	oleutil.CallMethod(presentation, "Close")
 	oleutil.CallMethod(ppt, "Quit")
 
