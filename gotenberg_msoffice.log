@@ -1,0 +1,5 @@
+2025/04/10 11:33:39.651903 gotenberg.go:33: [Info] post /forms/libreoffice/convert
+2025/04/10 11:33:39.694054 convert.go:62: [Info] officeExcel2pdf - start
+2025/04/10 11:33:39.694557 convert.go:63: [Info] fileName=C:\Users\Gary\AppData\Local\Temp\gotenberg_msoffice_666306736\file_0_586790904.xlsx
+2025/04/10 11:33:39.694557 convert.go:64: [Info] pdfPath=C:\Users\Gary\AppData\Local\Temp\gotenberg_msoffice_666306736\file_0_586790904.pdf
+2025/04/10 11:33:40.265862 convert.go:122: [Info] officeExcel2pdf - success
